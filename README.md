@@ -4,17 +4,13 @@ A dual-pane file manager for Linux with APK tools integration, inspired by MT Ma
 
 ## Features
 
-- **Dual-pane file manager** - Navigate with two side-by-side file browsers
+- **Dual-pane file manager** - Navigate with two side-by-side file browsers  `removed`
 - **File operations** - Copy, move, rename, delete with progress dialogs
 - **APKTool integration** - Decompile and recompile APK files
 - **Text editor** - Built-in editor with syntax highlighting for Smali, Java, XML
 - **Archive support** - Browse and extract ZIP/APK archives
 - **Dark theme** - Modern dark UI theme
 - **Modular design** - Clean, class-based architecture
-
-## Screenshots
-
-*Screenshots will be added after testing*
 
 ## Requirements
 
