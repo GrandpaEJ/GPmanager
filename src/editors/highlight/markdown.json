@@ -1,0 +1,101 @@
+{
+  "name": "Markdown",
+  "extensions": [".md", ".markdown", ".mdown", ".mkd"],
+  "colors": {
+    "heading": "#569cd6",
+    "bold": "#d4d4d4",
+    "italic": "#d4d4d4",
+    "code": "#ce9178",
+    "link": "#4ec9b0",
+    "quote": "#6a9955",
+    "list": "#dcdcaa",
+    "hr": "#808080",
+    "table": "#92c5f8"
+  },
+  "rules": [
+    {
+      "name": "headings",
+      "pattern": "^#{1,6}\\s+.*$",
+      "color": "heading",
+      "bold": true
+    },
+    {
+      "name": "bold_text",
+      "pattern": "\\*\\*([^*]+)\\*\\*|__([^_]+)__",
+      "color": "bold",
+      "bold": true
+    },
+    {
+      "name": "italic_text",
+      "pattern": "\\*([^*]+)\\*|_([^_]+)_",
+      "color": "italic",
+      "italic": true
+    },
+    {
+      "name": "inline_code",
+      "pattern": "`([^`]+)`",
+      "color": "code"
+    },
+    {
+      "name": "links",
+      "pattern": "\\[([^\\]]+)\\]\\(([^)]+)\\)",
+      "color": "link"
+    },
+    {
+      "name": "images",
+      "pattern": "!\\[([^\\]]*)\\]\\(([^)]+)\\)",
+      "color": "link"
+    },
+    {
+      "name": "reference_links",
+      "pattern": "\\[([^\\]]+)\\]\\[([^\\]]*)\\]",
+      "color": "link"
+    },
+    {
+      "name": "blockquotes",
+      "pattern": "^>.*$",
+      "color": "quote",
+      "italic": true
+    },
+    {
+      "name": "unordered_lists",
+      "pattern": "^\\s*[*+-]\\s+",
+      "color": "list"
+    },
+    {
+      "name": "ordered_lists",
+      "pattern": "^\\s*\\d+\\.\\s+",
+      "color": "list"
+    },
+    {
+      "name": "horizontal_rules",
+      "pattern": "^\\s*(\\*\\s*){3,}$|^\\s*(-\\s*){3,}$|^\\s*(_\\s*){3,}$",
+      "color": "hr",
+      "bold": true
+    },
+    {
+      "name": "table_separators",
+      "pattern": "^\\s*\\|.*\\|\\s*$",
+      "color": "table"
+    },
+    {
+      "name": "strikethrough",
+      "pattern": "~~([^~]+)~~",
+      "color": "italic"
+    }
+  ],
+  "multiline_rules": [
+    {
+      "name": "code_blocks",
+      "start": "```",
+      "end": "```",
+      "color": "code"
+    },
+    {
+      "name": "code_blocks_indented",
+      "start": "^    ",
+      "end": "^(?!    )",
+      "color": "code"
+    }
+  ]
+}

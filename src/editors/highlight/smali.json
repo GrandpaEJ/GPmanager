@@ -1,0 +1,77 @@
+{
+  "name": "Smali",
+  "extensions": [".smali"],
+  "colors": {
+    "directive": "#c586c0",
+    "keyword": "#569cd6",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "register": "#dcdcaa",
+    "type": "#4ec9b0",
+    "label": "#d7ba7d",
+    "operator": "#d4d4d4"
+  },
+  "rules": [
+    {
+      "name": "directives",
+      "pattern": "\\.(class|super|implements|source|field|method|end|local|line|parameter|annotation|prologue|epilogue|catch|catchall|packed-switch|sparse-switch|array-data|subannotation|enum)\\b",
+      "color": "directive",
+      "bold": true
+    },
+    {
+      "name": "access_modifiers",
+      "pattern": "\\b(public|private|protected|static|final|synchronized|volatile|transient|native|interface|abstract|strictfp|synthetic|annotation|enum|bridge|varargs|constructor)\\b",
+      "color": "keyword",
+      "bold": true
+    },
+    {
+      "name": "instructions",
+      "pattern": "\\b(move|move-wide|move-object|move-result|move-result-wide|move-result-object|move-exception|return-void|return|return-wide|return-object|const|const-wide|const-string|const-class|monitor-enter|monitor-exit|check-cast|instance-of|array-length|new-instance|new-array|filled-new-array|filled-new-array-range|fill-array-data|throw|goto|switch|cmp|if|aget|aput|iget|iput|sget|sput|invoke|unop|binop)\\b",
+      "color": "keyword"
+    },
+    {
+      "name": "registers",
+      "pattern": "\\b[vp]\\d+\\b",
+      "color": "register",
+      "bold": true
+    },
+    {
+      "name": "types",
+      "pattern": "L[\\w/$]+;|\\[[ZBSCIJFD]|[ZBSCIJFDV]",
+      "color": "type"
+    },
+    {
+      "name": "labels",
+      "pattern": ":[\\w_]+",
+      "color": "label",
+      "bold": true
+    },
+    {
+      "name": "string_literals",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b-?\\d+(\\.\\d+)?[fFdDlLsStT]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "hex_numbers",
+      "pattern": "\\b-?0x[0-9a-fA-F]+[lLsStT]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "comments",
+      "pattern": "#.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[{}(),->]",
+      "color": "operator"
+    }
+  ]
+}

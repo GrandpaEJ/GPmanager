@@ -1,3 +1,23 @@
+# GP Manager Documentation
+
+This directory contains comprehensive documentation for GP Manager.
+
+## 📚 **Documentation Files**
+
+- **[INDEX.md](INDEX.md)** - Complete project index and overview
+- **[NAVIGATION.md](NAVIGATION.md)** - Quick navigation hub
+- **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** - Detailed installation instructions
+- **[SYNTAX_HIGHLIGHTING.md](SYNTAX_HIGHLIGHTING.md)** - Syntax highlighting system
+- **[EXTERNAL_EDITORS_AND_HEX.md](EXTERNAL_EDITORS_AND_HEX.md)** - External editor integration
+- **[FLEXIBLE_TOOLS_SYSTEM.md](FLEXIBLE_TOOLS_SYSTEM.md)** - Modular tool architecture
+- **[WINDOW_CONTROLS.md](WINDOW_CONTROLS.md)** - Window management features
+
+## 🚀 **Quick Start**
+
+For the main project documentation, see the [main README](../README.md) in the root directory.
+
+---
+
 # GP Manager
 
 A dual-pane file manager for Linux with APK tools integration, inspired by MT Manager for Android.
@@ -29,8 +49,8 @@ A dual-pane file manager for Linux with APK tools integration, inspired by MT Ma
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/GrandpaEJ/GPmanager.git
-   cd GPmanager
+   git clone <repository-url>
+   cd gpmanager
    ```
 
 2. **Run the setup wizard:**

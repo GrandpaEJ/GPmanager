@@ -1,0 +1,104 @@
+{
+  "name": "C++",
+  "extensions": [".cpp", ".cxx", ".cc", ".c++", ".hpp", ".hxx", ".hh", ".h++", ".h"],
+  "colors": {
+    "keyword": "#569cd6",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "function": "#dcdcaa",
+    "class": "#4ec9b0",
+    "preprocessor": "#c586c0",
+    "operator": "#d4d4d4",
+    "type": "#569cd6"
+  },
+  "rules": [
+    {
+      "name": "keywords",
+      "pattern": "\\b(alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|class|compl|const|constexpr|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\\b",
+      "color": "keyword",
+      "bold": true
+    },
+    {
+      "name": "preprocessor",
+      "pattern": "#\\s*(include|define|undef|ifdef|ifndef|if|else|elif|endif|error|pragma|line)\\b.*$",
+      "color": "preprocessor",
+      "bold": true
+    },
+    {
+      "name": "class_definition",
+      "pattern": "\\b(class|struct|union)\\s+(\\w+)",
+      "color": "class",
+      "bold": true,
+      "group": 2
+    },
+    {
+      "name": "function_definition",
+      "pattern": "\\b\\w+\\s+(\\w+)\\s*\\(",
+      "color": "function",
+      "bold": true,
+      "group": 1
+    },
+    {
+      "name": "standard_types",
+      "pattern": "\\b(std::|string|vector|map|set|list|deque|stack|queue|priority_queue|pair|tuple|array|unordered_map|unordered_set|shared_ptr|unique_ptr|weak_ptr)\\w*",
+      "color": "type",
+      "bold": true
+    },
+    {
+      "name": "string_literals",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "char_literals",
+      "pattern": "'([^'\\\\]|\\\\.)'",
+      "color": "string"
+    },
+    {
+      "name": "raw_string_literals",
+      "pattern": "R\"\\([\\s\\S]*?\\)\"",
+      "color": "string"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[fFlLuU]*\\b",
+      "color": "number"
+    },
+    {
+      "name": "hex_numbers",
+      "pattern": "\\b0[xX][0-9a-fA-F]+[lLuU]*\\b",
+      "color": "number"
+    },
+    {
+      "name": "binary_numbers",
+      "pattern": "\\b0[bB][01]+[lLuU]*\\b",
+      "color": "number"
+    },
+    {
+      "name": "octal_numbers",
+      "pattern": "\\b0[0-7]+[lLuU]*\\b",
+      "color": "number"
+    },
+    {
+      "name": "single_line_comments",
+      "pattern": "//.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[+\\-*/%=<>!&|^~?:.]",
+      "color": "operator"
+    }
+  ],
+  "multiline_rules": [
+    {
+      "name": "multiline_comments",
+      "start": "/\\*",
+      "end": "\\*/",
+      "color": "comment",
+      "italic": true
+    }
+  ]
+}

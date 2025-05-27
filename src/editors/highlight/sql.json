@@ -1,0 +1,86 @@
+{
+  "name": "SQL",
+  "extensions": [".sql", ".mysql", ".pgsql", ".sqlite"],
+  "colors": {
+    "keyword": "#569cd6",
+    "function": "#dcdcaa",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "operator": "#d4d4d4",
+    "identifier": "#d4d4d4"
+  },
+  "rules": [
+    {
+      "name": "keywords",
+      "pattern": "\\b(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TABLE|INDEX|VIEW|DATABASE|SCHEMA|PROCEDURE|FUNCTION|TRIGGER|IF|ELSE|CASE|WHEN|THEN|END|AS|AND|OR|NOT|IN|EXISTS|BETWEEN|LIKE|IS|NULL|TRUE|FALSE|DISTINCT|ORDER|BY|GROUP|HAVING|LIMIT|OFFSET|UNION|JOIN|INNER|LEFT|RIGHT|FULL|OUTER|ON|USING|PRIMARY|KEY|FOREIGN|REFERENCES|UNIQUE|CHECK|DEFAULT|AUTO_INCREMENT|IDENTITY|SERIAL|CONSTRAINT|GRANT|REVOKE|COMMIT|ROLLBACK|TRANSACTION|BEGIN|START|DECLARE|SET|EXEC|EXECUTE|RETURN|WHILE|FOR|LOOP|CURSOR|OPEN|CLOSE|FETCH|DEALLOCATE)\\b",
+      "color": "keyword",
+      "bold": true,
+      "case_insensitive": true
+    },
+    {
+      "name": "data_types",
+      "pattern": "\\b(INT|INTEGER|BIGINT|SMALLINT|TINYINT|DECIMAL|NUMERIC|FLOAT|REAL|DOUBLE|CHAR|VARCHAR|TEXT|NCHAR|NVARCHAR|NTEXT|BINARY|VARBINARY|IMAGE|DATE|TIME|DATETIME|TIMESTAMP|YEAR|BOOLEAN|BOOL|BIT|BLOB|CLOB|UUID|SERIAL|MONEY|SMALLMONEY)\\b",
+      "color": "keyword",
+      "case_insensitive": true
+    },
+    {
+      "name": "functions",
+      "pattern": "\\b(COUNT|SUM|AVG|MIN|MAX|UPPER|LOWER|SUBSTRING|LENGTH|TRIM|LTRIM|RTRIM|CONCAT|REPLACE|CAST|CONVERT|COALESCE|ISNULL|NULLIF|ABS|ROUND|FLOOR|CEIL|SQRT|POWER|NOW|GETDATE|DATEADD|DATEDIFF|YEAR|MONTH|DAY|HOUR|MINUTE|SECOND)\\b",
+      "color": "function",
+      "bold": true,
+      "case_insensitive": true
+    },
+    {
+      "name": "string_literals_single",
+      "pattern": "'([^'\\\\]|\\\\.)*'",
+      "color": "string"
+    },
+    {
+      "name": "string_literals_double",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "identifiers_backtick",
+      "pattern": "`([^`\\\\]|\\\\.)*`",
+      "color": "identifier"
+    },
+    {
+      "name": "identifiers_bracket",
+      "pattern": "\\[([^\\]\\\\]|\\\\.)*\\]",
+      "color": "identifier"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "color": "number"
+    },
+    {
+      "name": "single_line_comments",
+      "pattern": "--.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "hash_comments",
+      "pattern": "#.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[+\\-*/%=<>!]|\\b(AND|OR|NOT|LIKE|IN|BETWEEN|IS)\\b",
+      "color": "operator"
+    }
+  ],
+  "multiline_rules": [
+    {
+      "name": "multiline_comments",
+      "start": "/\\*",
+      "end": "\\*/",
+      "color": "comment",
+      "italic": true
+    }
+  ]
+}

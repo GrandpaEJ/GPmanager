@@ -1,0 +1,111 @@
+{
+  "name": "C#",
+  "extensions": [".cs"],
+  "colors": {
+    "keyword": "#569cd6",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "function": "#dcdcaa",
+    "class": "#4ec9b0",
+    "attribute": "#c586c0",
+    "operator": "#d4d4d4",
+    "type": "#569cd6"
+  },
+  "rules": [
+    {
+      "name": "keywords",
+      "pattern": "\\b(abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|void|volatile|while)\\b",
+      "color": "keyword",
+      "bold": true
+    },
+    {
+      "name": "contextual_keywords",
+      "pattern": "\\b(add|alias|ascending|async|await|by|descending|dynamic|equals|from|get|global|group|into|join|let|nameof|on|orderby|partial|remove|select|set|value|var|when|where|yield)\\b",
+      "color": "keyword"
+    },
+    {
+      "name": "attributes",
+      "pattern": "\\[\\s*\\w+[\\w\\s,=()\"]*\\]",
+      "color": "attribute",
+      "bold": true
+    },
+    {
+      "name": "class_definition",
+      "pattern": "\\b(class|interface|struct|enum)\\s+(\\w+)",
+      "color": "class",
+      "bold": true,
+      "group": 2
+    },
+    {
+      "name": "method_definition",
+      "pattern": "\\b(public|private|protected|internal|static|virtual|override|abstract)?\\s*\\w+\\s+(\\w+)\\s*\\(",
+      "color": "function",
+      "bold": true,
+      "group": 2
+    },
+    {
+      "name": "built_in_types",
+      "pattern": "\\b(bool|byte|sbyte|char|decimal|double|float|int|uint|long|ulong|object|short|ushort|string|void)\\b",
+      "color": "type",
+      "bold": true
+    },
+    {
+      "name": "string_literals",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "verbatim_strings",
+      "pattern": "@\"([^\"]|\"\")*\"",
+      "color": "string"
+    },
+    {
+      "name": "char_literals",
+      "pattern": "'([^'\\\\]|\\\\.)'",
+      "color": "string"
+    },
+    {
+      "name": "interpolated_strings",
+      "pattern": "\\$\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[fFdDmM]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "hex_numbers",
+      "pattern": "\\b0[xX][0-9a-fA-F]+[lLuU]*\\b",
+      "color": "number"
+    },
+    {
+      "name": "single_line_comments",
+      "pattern": "//.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[+\\-*/%=<>!&|^~?:.]",
+      "color": "operator"
+    }
+  ],
+  "multiline_rules": [
+    {
+      "name": "multiline_comments",
+      "start": "/\\*",
+      "end": "\\*/",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "xml_documentation",
+      "start": "///",
+      "end": "$",
+      "color": "comment",
+      "italic": true
+    }
+  ]
+}

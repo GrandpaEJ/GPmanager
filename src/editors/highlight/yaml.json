@@ -1,0 +1,94 @@
+{
+  "name": "YAML",
+  "extensions": [".yaml", ".yml"],
+  "colors": {
+    "key": "#92c5f8",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "boolean": "#569cd6",
+    "null": "#569cd6",
+    "anchor": "#c586c0",
+    "tag": "#4ec9b0",
+    "punctuation": "#d4d4d4"
+  },
+  "rules": [
+    {
+      "name": "yaml_keys",
+      "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_-]*)\\s*:",
+      "color": "key",
+      "bold": true,
+      "group": 1
+    },
+    {
+      "name": "quoted_keys",
+      "pattern": "^\\s*([\"'][^\"']*[\"'])\\s*:",
+      "color": "key",
+      "bold": true,
+      "group": 1
+    },
+    {
+      "name": "string_values_double",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "string_values_single",
+      "pattern": "'([^'\\\\]|\\\\.)*'",
+      "color": "string"
+    },
+    {
+      "name": "multiline_strings",
+      "pattern": "[|>][-+]?\\s*$",
+      "color": "string"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "color": "number"
+    },
+    {
+      "name": "booleans",
+      "pattern": "\\b(true|false|yes|no|on|off)\\b",
+      "color": "boolean",
+      "bold": true,
+      "case_insensitive": true
+    },
+    {
+      "name": "null_values",
+      "pattern": "\\b(null|~)\\b",
+      "color": "null",
+      "bold": true,
+      "case_insensitive": true
+    },
+    {
+      "name": "anchors_and_aliases",
+      "pattern": "&\\w+|\\*\\w+",
+      "color": "anchor",
+      "bold": true
+    },
+    {
+      "name": "tags",
+      "pattern": "!!\\w+",
+      "color": "tag",
+      "bold": true
+    },
+    {
+      "name": "document_separators",
+      "pattern": "^(---|\\.\\.\\.)\\s*$",
+      "color": "punctuation",
+      "bold": true
+    },
+    {
+      "name": "list_items",
+      "pattern": "^\\s*-\\s",
+      "color": "punctuation"
+    },
+    {
+      "name": "comments",
+      "pattern": "#.*$",
+      "color": "comment",
+      "italic": true
+    }
+  ]
+}

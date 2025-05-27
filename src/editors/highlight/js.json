@@ -1,0 +1,109 @@
+{
+  "name": "JavaScript",
+  "extensions": [".js", ".jsx", ".mjs", ".es6"],
+  "colors": {
+    "keyword": "#569cd6",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "function": "#dcdcaa",
+    "class": "#4ec9b0",
+    "operator": "#d4d4d4",
+    "regex": "#d16969",
+    "template": "#ce9178"
+  },
+  "rules": [
+    {
+      "name": "keywords",
+      "pattern": "\\b(abstract|arguments|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|eval|export|extends|false|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|true|try|typeof|var|void|volatile|while|with|yield)\\b",
+      "color": "keyword",
+      "bold": true
+    },
+    {
+      "name": "es6_keywords",
+      "pattern": "\\b(async|await|class|const|export|extends|import|let|static|super|yield)\\b",
+      "color": "keyword",
+      "bold": true
+    },
+    {
+      "name": "function_definition",
+      "pattern": "\\bfunction\\s+(\\w+)",
+      "color": "function",
+      "bold": true,
+      "group": 1
+    },
+    {
+      "name": "arrow_functions",
+      "pattern": "(\\w+)\\s*=>",
+      "color": "function",
+      "group": 1
+    },
+    {
+      "name": "class_definition",
+      "pattern": "\\bclass\\s+(\\w+)",
+      "color": "class",
+      "bold": true,
+      "group": 1
+    },
+    {
+      "name": "string_literals_double",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "string_literals_single",
+      "pattern": "'([^'\\\\]|\\\\.)*'",
+      "color": "string"
+    },
+    {
+      "name": "template_literals",
+      "pattern": "`([^`\\\\]|\\\\.)*`",
+      "color": "template"
+    },
+    {
+      "name": "regex_literals",
+      "pattern": "/([^/\\\\\\n]|\\\\.)+/[gimuy]*",
+      "color": "regex"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "color": "number"
+    },
+    {
+      "name": "hex_numbers",
+      "pattern": "\\b0[xX][0-9a-fA-F]+\\b",
+      "color": "number"
+    },
+    {
+      "name": "binary_numbers",
+      "pattern": "\\b0[bB][01]+\\b",
+      "color": "number"
+    },
+    {
+      "name": "octal_numbers",
+      "pattern": "\\b0[oO][0-7]+\\b",
+      "color": "number"
+    },
+    {
+      "name": "single_line_comments",
+      "pattern": "//.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[+\\-*/%=<>!&|^~?:.]",
+      "color": "operator"
+    }
+  ],
+  "multiline_rules": [
+    {
+      "name": "multiline_comments",
+      "start": "/\\*",
+      "end": "\\*/",
+      "color": "comment",
+      "italic": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# Python package requirements for GP Manager
+#
+# For Ubuntu/Debian systems, install using apt:
+# sudo apt install python3-pyqt5 python3-pyqt5.qsci python3-pygments python3-magic
+#
+# For other systems or virtual environments, use pip:
+PyQt5>=5.15.0
+QScintilla>=2.13.0
+Pygments>=2.10.0
+python-magic>=0.4.24
+
+# Optional dependencies for APK operations:
+# apktool (install via apt: sudo apt install apktool)
+# java (install via apt: sudo apt install default-jdk)

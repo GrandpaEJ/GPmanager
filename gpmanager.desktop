@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GP Manager
+Comment=Dual-pane file manager with APK tools
+Exec=/home/grandpa/me/vscode/gpmanager/run.sh
+Icon=folder-manager
+Terminal=false
+Categories=System;FileManager;
+Keywords=file;manager;apk;android;decompile;
+StartupNotify=true
+MimeType=application/vnd.android.package-archive;

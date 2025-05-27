@@ -1,0 +1,99 @@
+{
+  "name": "Java",
+  "extensions": [".java"],
+  "colors": {
+    "keyword": "#569cd6",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "function": "#dcdcaa",
+    "class": "#4ec9b0",
+    "annotation": "#c586c0",
+    "operator": "#d4d4d4",
+    "type": "#569cd6"
+  },
+  "rules": [
+    {
+      "name": "keywords",
+      "pattern": "\\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while)\\b",
+      "color": "keyword",
+      "bold": true
+    },
+    {
+      "name": "annotations",
+      "pattern": "@\\w+",
+      "color": "annotation",
+      "bold": true
+    },
+    {
+      "name": "class_definition",
+      "pattern": "\\b(class|interface|enum)\\s+(\\w+)",
+      "color": "class",
+      "bold": true,
+      "group": 2
+    },
+    {
+      "name": "method_definition",
+      "pattern": "\\b(public|private|protected|static|final|abstract|synchronized|native)?\\s*\\w+\\s+(\\w+)\\s*\\(",
+      "color": "function",
+      "bold": true,
+      "group": 2
+    },
+    {
+      "name": "primitive_types",
+      "pattern": "\\b(boolean|byte|char|double|float|int|long|short|void)\\b",
+      "color": "type",
+      "bold": true
+    },
+    {
+      "name": "string_literals",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "char_literals",
+      "pattern": "'([^'\\\\]|\\\\.)'",
+      "color": "string"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?[fFdDlL]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "hex_numbers",
+      "pattern": "\\b0[xX][0-9a-fA-F]+[lL]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "binary_numbers",
+      "pattern": "\\b0[bB][01]+[lL]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "octal_numbers",
+      "pattern": "\\b0[0-7]+[lL]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "single_line_comments",
+      "pattern": "//.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[+\\-*/%=<>!&|^~?:]",
+      "color": "operator"
+    }
+  ],
+  "multiline_rules": [
+    {
+      "name": "multiline_comments",
+      "start": "/\\*",
+      "end": "\\*/",
+      "color": "comment",
+      "italic": true
+    }
+  ]
+}

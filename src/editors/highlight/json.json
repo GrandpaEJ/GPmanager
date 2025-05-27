@@ -1,0 +1,64 @@
+{
+  "name": "JSON",
+  "extensions": [".json", ".jsonc"],
+  "colors": {
+    "key": "#92c5f8",
+    "string": "#ce9178",
+    "number": "#b5cea8",
+    "boolean": "#569cd6",
+    "null": "#569cd6",
+    "comment": "#6a9955",
+    "punctuation": "#d4d4d4"
+  },
+  "rules": [
+    {
+      "name": "json_keys",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"(?=\\s*:)",
+      "color": "key",
+      "bold": true,
+      "group": 1
+    },
+    {
+      "name": "string_values",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"(?!\\s*:)",
+      "color": "string"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b",
+      "color": "number"
+    },
+    {
+      "name": "booleans",
+      "pattern": "\\b(true|false)\\b",
+      "color": "boolean",
+      "bold": true
+    },
+    {
+      "name": "null_values",
+      "pattern": "\\bnull\\b",
+      "color": "null",
+      "bold": true
+    },
+    {
+      "name": "punctuation",
+      "pattern": "[{}\\[\\],:]",
+      "color": "punctuation"
+    },
+    {
+      "name": "single_line_comments",
+      "pattern": "//.*$",
+      "color": "comment",
+      "italic": true
+    }
+  ],
+  "multiline_rules": [
+    {
+      "name": "multiline_comments",
+      "start": "/\\*",
+      "end": "\\*/",
+      "color": "comment",
+      "italic": true
+    }
+  ]
+}

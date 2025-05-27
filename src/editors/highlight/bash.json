@@ -1,0 +1,88 @@
+{
+  "name": "Bash/Shell",
+  "extensions": [".sh", ".bash", ".zsh", ".fish"],
+  "colors": {
+    "keyword": "#569cd6",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "function": "#dcdcaa",
+    "variable": "#9cdcfe",
+    "operator": "#d4d4d4",
+    "command": "#4ec9b0"
+  },
+  "rules": [
+    {
+      "name": "shebang",
+      "pattern": "^#!.*$",
+      "color": "comment",
+      "bold": true
+    },
+    {
+      "name": "keywords",
+      "pattern": "\\b(if|then|else|elif|fi|case|esac|for|while|until|do|done|function|select|time|in|break|continue|return|exit|export|local|readonly|declare|typeset|unset|shift|eval|exec|source|alias|unalias|history|jobs|bg|fg|nohup|disown|suspend|kill|killall|trap|wait)\\b",
+      "color": "keyword",
+      "bold": true
+    },
+    {
+      "name": "test_operators",
+      "pattern": "\\b(-eq|-ne|-lt|-le|-gt|-ge|-z|-n|-f|-d|-e|-r|-w|-x|-s|-L|-S|-p|-b|-c|-t|-u|-g|-k|-O|-G|-N)\\b",
+      "color": "operator",
+      "bold": true
+    },
+    {
+      "name": "variables",
+      "pattern": "\\$\\{?[a-zA-Z_][a-zA-Z0-9_]*\\}?|\\$[0-9*@#?$!-]",
+      "color": "variable"
+    },
+    {
+      "name": "special_variables",
+      "pattern": "\\$(HOME|PATH|USER|SHELL|PWD|OLDPWD|RANDOM|SECONDS|LINENO|BASH_VERSION|HOSTNAME|HOSTTYPE|OSTYPE|MACHTYPE|IFS|PS1|PS2|PS3|PS4)\\b",
+      "color": "variable",
+      "bold": true
+    },
+    {
+      "name": "command_substitution",
+      "pattern": "`[^`]*`|\\$\\([^)]*\\)",
+      "color": "command"
+    },
+    {
+      "name": "function_definition",
+      "pattern": "^\\s*(\\w+)\\s*\\(\\)",
+      "color": "function",
+      "bold": true,
+      "group": 1
+    },
+    {
+      "name": "string_literals_double",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "string_literals_single",
+      "pattern": "'([^'\\\\]|\\\\.)*'",
+      "color": "string"
+    },
+    {
+      "name": "numbers",
+      "pattern": "\\b\\d+\\b",
+      "color": "number"
+    },
+    {
+      "name": "comments",
+      "pattern": "#.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[|&;()<>{}\\[\\]!]|\\|\\||&&|>>|<<|\\+=|-=|\\*=|/=|%=|==|!=|<=|>=",
+      "color": "operator"
+    },
+    {
+      "name": "redirections",
+      "pattern": "[0-9]*[<>]&?[0-9]*|&[0-9]+",
+      "color": "operator"
+    }
+  ]
+}
