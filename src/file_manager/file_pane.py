@@ -235,56 +235,154 @@ class FilePane(QWidget):
         return selected_files
 
     def show_context_menu(self, position):
-        """Show context menu"""
+        """Show comprehensive context menu"""
         index = self.tree_view.indexAt(position)
         menu = QMenu(self)
-
-        # Common actions
-        refresh_action = menu.addAction("Refresh")
-        refresh_action.triggered.connect(self.refresh)
-
-        new_folder_action = menu.addAction("New Folder")
-        new_folder_action.triggered.connect(self.create_new_folder)
-
-        menu.addSeparator()
 
         if index.isValid():
             item = self.file_model.itemFromIndex(index)
             if item:
                 file_path = item.data(Qt.UserRole)
                 if file_path and file_path != '..':
-                    # File/folder specific actions
-                    copy_action = menu.addAction("Copy")
+                    path = Path(file_path)
+
+                    # === OPEN WITH SECTION ===
+                    open_menu = menu.addMenu("📂 Open with")
+
+                    # Text Editor
+                    text_action = open_menu.addAction("📝 Text Editor")
+                    text_action.triggered.connect(lambda: self.open_with_text_editor(file_path))
+
+                    # Hex Editor
+                    hex_action = open_menu.addAction("🔧 Hex Editor")
+                    hex_action.triggered.connect(lambda: self.open_in_hex_editor(file_path))
+
+                    # DEX Editor (for .dex files)
+                    if self.is_dex_file(file_path):
+                        dex_action = open_menu.addAction("⚙️ DEX Editor")
+                        dex_action.triggered.connect(lambda: self.open_in_dex_editor(file_path))
+
+                    open_menu.addSeparator()
+
+                    # External Editors submenu
+                    if path.is_file():
+                        self.add_external_editor_menu(open_menu, file_path)
+
+                    # Media viewers for specific file types
+                    if self.is_image_file(file_path):
+                        image_action = open_menu.addAction("🖼️ Image Viewer")
+                        image_action.triggered.connect(lambda: self.open_as_image(file_path))
+
+                    if self.is_video_file(file_path):
+                        video_action = open_menu.addAction("🎬 Video Player")
+                        video_action.triggered.connect(lambda: self.open_as_video(file_path))
+
+                    if self.is_audio_file(file_path):
+                        audio_action = open_menu.addAction("🎵 Audio Player")
+                        audio_action.triggered.connect(lambda: self.open_as_audio(file_path))
+
+                    # System default
+                    open_menu.addSeparator()
+                    system_action = open_menu.addAction("⚙️ System Default")
+                    system_action.triggered.connect(lambda: self.open_with_system_default(file_path))
+
+                    menu.addSeparator()
+
+                    # === APK TOOLS SECTION ===
+                    if FileUtils.is_apk_file(file_path):
+                        apk_menu = menu.addMenu("📱 APK Tools")
+
+                        decompile_action = apk_menu.addAction("🔓 Decompile")
+                        decompile_action.triggered.connect(lambda: self.decompile_apk(file_path))
+
+                        recompile_action = apk_menu.addAction("🔒 Recompile")
+                        recompile_action.triggered.connect(lambda: self.recompile_apk(file_path))
+
+                        apk_menu.addSeparator()
+
+                        info_action = apk_menu.addAction("ℹ️ APK Info")
+                        info_action.triggered.connect(lambda: self.show_apk_info(file_path))
+
+                        extract_action = apk_menu.addAction("📦 Extract APK")
+                        extract_action.triggered.connect(lambda: self.extract_apk(file_path))
+
+                        menu.addSeparator()
+
+                    # === ARCHIVE TOOLS SECTION ===
+                    if FileUtils.is_archive_file(file_path) and not FileUtils.is_apk_file(file_path):
+                        archive_menu = menu.addMenu("📦 Archive Tools")
+
+                        extract_action = archive_menu.addAction("📤 Extract Here")
+                        extract_action.triggered.connect(lambda: self.extract_archive(file_path))
+
+                        extract_to_action = archive_menu.addAction("📁 Extract To...")
+                        extract_to_action.triggered.connect(lambda: self.extract_archive_to(file_path))
+
+                        view_action = archive_menu.addAction("👁️ View Contents")
+                        view_action.triggered.connect(lambda: self.view_archive_contents(file_path))
+
+                        menu.addSeparator()
+
+                    # === FILE OPERATIONS SECTION ===
+                    file_ops_menu = menu.addMenu("📋 File Operations")
+
+                    copy_action = file_ops_menu.addAction("📄 Copy")
                     copy_action.triggered.connect(self.copy_selected)
 
-                    cut_action = menu.addAction("Cut")
+                    cut_action = file_ops_menu.addAction("✂️ Cut")
                     cut_action.triggered.connect(self.cut_selected)
 
-                    rename_action = menu.addAction("Rename")
+                    rename_action = file_ops_menu.addAction("✏️ Rename")
                     rename_action.triggered.connect(self.rename_selected)
 
-                    delete_action = menu.addAction("Delete")
+                    file_ops_menu.addSeparator()
+
+                    delete_action = file_ops_menu.addAction("🗑️ Delete")
                     delete_action.triggered.connect(self.delete_selected)
 
                     menu.addSeparator()
 
-                    # Open with external editors
-                    if Path(file_path).is_file():
-                        self.add_external_editor_menu(menu, file_path)
+                    # === TOOLS SECTION ===
+                    tools_menu = menu.addMenu("🔧 Tools")
+
+                    # Compression tools
+                    if path.is_file():
+                        compress_action = tools_menu.addAction("🗜️ Compress")
+                        compress_action.triggered.connect(lambda: self.compress_file(file_path))
+
+                    # Hash calculation
+                    hash_action = tools_menu.addAction("🔐 Calculate Hash")
+                    hash_action.triggered.connect(lambda: self.calculate_hash(file_path))
+
+                    # File comparison
+                    compare_action = tools_menu.addAction("⚖️ Compare Files")
+                    compare_action.triggered.connect(lambda: self.compare_files(file_path))
 
                     menu.addSeparator()
 
-                    # APK specific actions
-                    if FileUtils.is_apk_file(file_path):
-                        decompile_action = menu.addAction("Decompile APK")
-                        decompile_action.triggered.connect(
-                            lambda: self.decompile_apk(file_path)
-                        )
+                    # === PROPERTIES ===
+                    properties_action = menu.addAction("ℹ️ Properties")
+                    properties_action.triggered.connect(lambda: self.show_properties(file_path))
 
-        # Show paste option if clipboard has files
+        # === GENERAL ACTIONS ===
+        menu.addSeparator()
+
+        # Paste option if clipboard has files
         if hasattr(self, 'clipboard_files') and self.clipboard_files:
-            paste_action = menu.addAction("Paste")
+            paste_action = menu.addAction("📋 Paste")
             paste_action.triggered.connect(self.paste_files)
+
+        # General folder actions
+        new_folder_action = menu.addAction("📁 New Folder")
+        new_folder_action.triggered.connect(self.create_new_folder)
+
+        new_file_action = menu.addAction("📄 New File")
+        new_file_action.triggered.connect(self.create_new_file)
+
+        menu.addSeparator()
+
+        refresh_action = menu.addAction("🔄 Refresh")
+        refresh_action.triggered.connect(self.refresh)
 
         menu.exec_(self.tree_view.mapToGlobal(position))
 
@@ -480,3 +578,296 @@ class FilePane(QWidget):
             main_window.open_in_hex_editor(file_path)
         else:
             QMessageBox.information(self, "Hex Editor", "Hex editor not available")
+
+    def open_in_dex_editor(self, file_path):
+        """Open file in DEX editor"""
+        main_window = self.get_main_window()
+        if main_window and hasattr(main_window, 'open_dex_file'):
+            main_window.open_dex_file(file_path)
+        else:
+            QMessageBox.information(self, "DEX Editor", "DEX editor not available")
+
+    # === FILE TYPE DETECTION METHODS ===
+    def is_image_file(self, file_path):
+        """Check if file is an image"""
+        ext = Path(file_path).suffix.lower()
+        return ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp', '.tiff', '.ico']
+
+    def is_video_file(self, file_path):
+        """Check if file is a video"""
+        ext = Path(file_path).suffix.lower()
+        return ext in ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm', '.m4v', '.3gp']
+
+    def is_audio_file(self, file_path):
+        """Check if file is audio"""
+        ext = Path(file_path).suffix.lower()
+        return ext in ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.wma', '.m4a', '.opus']
+
+    def is_dex_file(self, file_path):
+        """Check if file is a DEX file"""
+        return FileUtils.is_dex_file(file_path)
+
+    # === OPEN WITH METHODS ===
+    def open_with_text_editor(self, file_path):
+        """Open file with text editor"""
+        main_window = self.get_main_window()
+        if main_window and hasattr(main_window, 'open_file_in_editor'):
+            main_window.open_file_in_editor(file_path)
+        else:
+            QMessageBox.information(self, "Text Editor", "Text editor not available")
+
+    def open_as_image(self, file_path):
+        """Open file as image"""
+        # Try to use built-in image viewer first
+        main_window = self.get_main_window()
+        if main_window and hasattr(main_window, 'open_image_in_viewer'):
+            if main_window.open_image_in_viewer(file_path):
+                return
+
+        # Fallback to system default
+        try:
+            import subprocess
+            subprocess.run(['xdg-open', file_path])
+        except Exception as e:
+            QMessageBox.warning(self, "Image Viewer", f"Failed to open image: {str(e)}")
+
+    def open_as_video(self, file_path):
+        """Open file as video"""
+        try:
+            import subprocess
+            # Try common video players
+            players = ['vlc', 'mpv', 'totem', 'xdg-open']
+            for player in players:
+                try:
+                    subprocess.run([player, file_path], check=True)
+                    return
+                except (subprocess.CalledProcessError, FileNotFoundError):
+                    continue
+            QMessageBox.warning(self, "Video Player", "No video player found")
+        except Exception as e:
+            QMessageBox.warning(self, "Video Player", f"Failed to open video: {str(e)}")
+
+    def open_as_audio(self, file_path):
+        """Open file as audio"""
+        try:
+            import subprocess
+            # Try common audio players
+            players = ['vlc', 'audacious', 'rhythmbox', 'xdg-open']
+            for player in players:
+                try:
+                    subprocess.run([player, file_path], check=True)
+                    return
+                except (subprocess.CalledProcessError, FileNotFoundError):
+                    continue
+            QMessageBox.warning(self, "Audio Player", "No audio player found")
+        except Exception as e:
+            QMessageBox.warning(self, "Audio Player", f"Failed to open audio: {str(e)}")
+
+    def open_with_system_default(self, file_path):
+        """Open file with system default application"""
+        try:
+            import subprocess
+            subprocess.run(['xdg-open', file_path])
+        except Exception as e:
+            QMessageBox.warning(self, "System Default", f"Failed to open file: {str(e)}")
+
+    # === APK TOOLS METHODS ===
+    def recompile_apk(self, file_path):
+        """Recompile APK file"""
+        main_window = self.get_main_window()
+        if main_window and hasattr(main_window, 'apk_tools'):
+            main_window.apk_tools.set_apk_file(file_path)
+            main_window.focus_tool("APK Tools")
+            # Switch to operations tab and trigger recompile
+            if hasattr(main_window.apk_tools, 'tab_widget'):
+                main_window.apk_tools.tab_widget.setCurrentIndex(1)  # Operations tab
+        else:
+            QMessageBox.information(self, "APK Tools", "APK tools not available")
+
+    def show_apk_info(self, file_path):
+        """Show APK information"""
+        main_window = self.get_main_window()
+        if main_window and hasattr(main_window, 'apk_tools'):
+            main_window.apk_tools.set_apk_file(file_path)
+            main_window.focus_tool("APK Tools")
+            # Switch to info tab
+            if hasattr(main_window.apk_tools, 'tab_widget'):
+                main_window.apk_tools.tab_widget.setCurrentIndex(0)  # Info tab
+        else:
+            QMessageBox.information(self, "APK Tools", "APK tools not available")
+
+    def extract_apk(self, file_path):
+        """Extract APK contents"""
+        try:
+            import zipfile
+            extract_dir = Path(file_path).parent / f"{Path(file_path).stem}_extracted"
+            extract_dir.mkdir(exist_ok=True)
+
+            with zipfile.ZipFile(file_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_dir)
+
+            QMessageBox.information(self, "Extract APK", f"APK extracted to: {extract_dir}")
+            self.refresh()
+        except Exception as e:
+            QMessageBox.warning(self, "Extract APK", f"Failed to extract APK: {str(e)}")
+
+    # === ARCHIVE TOOLS METHODS ===
+    def extract_archive(self, file_path):
+        """Extract archive to current directory"""
+        try:
+            import shutil
+            extract_dir = Path(file_path).parent / Path(file_path).stem
+            extract_dir.mkdir(exist_ok=True)
+
+            shutil.unpack_archive(file_path, extract_dir)
+            QMessageBox.information(self, "Extract Archive", f"Archive extracted to: {extract_dir}")
+            self.refresh()
+        except Exception as e:
+            QMessageBox.warning(self, "Extract Archive", f"Failed to extract archive: {str(e)}")
+
+    def extract_archive_to(self, file_path):
+        """Extract archive to chosen directory"""
+        from PyQt5.QtWidgets import QFileDialog
+        extract_dir = QFileDialog.getExistingDirectory(self, "Extract To", str(self.current_path))
+        if extract_dir:
+            try:
+                import shutil
+                shutil.unpack_archive(file_path, extract_dir)
+                QMessageBox.information(self, "Extract Archive", f"Archive extracted to: {extract_dir}")
+            except Exception as e:
+                QMessageBox.warning(self, "Extract Archive", f"Failed to extract archive: {str(e)}")
+
+    def view_archive_contents(self, file_path):
+        """View archive contents"""
+        main_window = self.get_main_window()
+        if main_window and hasattr(main_window, 'archive_viewer'):
+            main_window.archive_viewer.load_archive(file_path)
+            main_window.focus_tool("Archive Viewer")
+        else:
+            QMessageBox.information(self, "Archive Viewer", "Archive viewer not available")
+
+    # === TOOLS METHODS ===
+    def compress_file(self, file_path):
+        """Compress file or directory"""
+        from PyQt5.QtWidgets import QFileDialog
+
+        # Ask for output file
+        default_name = f"{Path(file_path).stem}.zip"
+        output_file, _ = QFileDialog.getSaveFileName(
+            self, "Save Compressed File",
+            str(Path(file_path).parent / default_name),
+            "ZIP Files (*.zip);;TAR Files (*.tar.gz);;All Files (*)"
+        )
+
+        if output_file:
+            try:
+                import shutil
+                if output_file.endswith('.zip'):
+                    shutil.make_archive(output_file[:-4], 'zip', Path(file_path).parent, Path(file_path).name)
+                elif output_file.endswith('.tar.gz'):
+                    shutil.make_archive(output_file[:-7], 'gztar', Path(file_path).parent, Path(file_path).name)
+                else:
+                    shutil.make_archive(output_file, 'zip', Path(file_path).parent, Path(file_path).name)
+
+                QMessageBox.information(self, "Compress", f"File compressed to: {output_file}")
+                self.refresh()
+            except Exception as e:
+                QMessageBox.warning(self, "Compress", f"Failed to compress file: {str(e)}")
+
+    def calculate_hash(self, file_path):
+        """Calculate file hash"""
+        try:
+            import hashlib
+
+            # Calculate multiple hashes
+            hash_md5 = hashlib.md5()
+            hash_sha1 = hashlib.sha1()
+            hash_sha256 = hashlib.sha256()
+
+            with open(file_path, 'rb') as f:
+                for chunk in iter(lambda: f.read(4096), b""):
+                    hash_md5.update(chunk)
+                    hash_sha1.update(chunk)
+                    hash_sha256.update(chunk)
+
+            # Show results in a dialog
+            from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton
+
+            dialog = QDialog(self)
+            dialog.setWindowTitle(f"File Hashes - {Path(file_path).name}")
+            dialog.resize(500, 300)
+
+            layout = QVBoxLayout(dialog)
+
+            text_edit = QTextEdit()
+            text_edit.setReadOnly(True)
+            text_edit.setPlainText(
+                f"File: {Path(file_path).name}\n"
+                f"Size: {Path(file_path).stat().st_size:,} bytes\n\n"
+                f"MD5:    {hash_md5.hexdigest()}\n"
+                f"SHA1:   {hash_sha1.hexdigest()}\n"
+                f"SHA256: {hash_sha256.hexdigest()}"
+            )
+            layout.addWidget(text_edit)
+
+            close_btn = QPushButton("Close")
+            close_btn.clicked.connect(dialog.accept)
+            layout.addWidget(close_btn)
+
+            dialog.exec_()
+
+        except Exception as e:
+            QMessageBox.warning(self, "Calculate Hash", f"Failed to calculate hash: {str(e)}")
+
+    def compare_files(self, file_path):
+        """Compare files"""
+        from PyQt5.QtWidgets import QFileDialog
+
+        # Ask for second file to compare
+        other_file, _ = QFileDialog.getOpenFileName(
+            self, "Select File to Compare", str(self.current_path), "All Files (*)"
+        )
+
+        if other_file:
+            try:
+                import filecmp
+
+                # Basic comparison
+                are_same = filecmp.cmp(file_path, other_file, shallow=False)
+
+                # Size comparison
+                size1 = Path(file_path).stat().st_size
+                size2 = Path(other_file).stat().st_size
+
+                # Show results
+                result_text = f"File 1: {Path(file_path).name} ({size1:,} bytes)\n"
+                result_text += f"File 2: {Path(other_file).name} ({size2:,} bytes)\n\n"
+                result_text += f"Files are {'identical' if are_same else 'different'}"
+
+                QMessageBox.information(self, "File Comparison", result_text)
+
+            except Exception as e:
+                QMessageBox.warning(self, "Compare Files", f"Failed to compare files: {str(e)}")
+
+    def show_properties(self, file_path):
+        """Show file properties"""
+        main_window = self.get_main_window()
+        if main_window and hasattr(main_window, 'show_file_properties'):
+            main_window.show_file_properties(file_path)
+        else:
+            # Fallback to basic properties dialog
+            from src.ui.dialogs import FilePropertiesDialog
+            dialog = FilePropertiesDialog(file_path, self)
+            dialog.exec_()
+
+    def create_new_file(self):
+        """Create new file"""
+        name, ok = QInputDialog.getText(self, "New File", "File name:")
+        if ok and name:
+            try:
+                new_file = self.current_path / name
+                new_file.touch()
+                self.refresh()
+                QMessageBox.information(self, "New File", f"Created: {name}")
+            except Exception as e:
+                QMessageBox.warning(self, "New File", f"Failed to create file: {str(e)}")

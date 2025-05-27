@@ -13,6 +13,7 @@ from src.file_manager.single_pane import SinglePaneManager
 from src.editors.text_editor import TextEditorWidget
 from src.tools.apktool import ApkToolWidget
 from src.tools.archive_manager import ArchiveViewer
+from src.viewers.image_viewer import ImageViewer
 from src.ui.dialogs import PreferencesDialog, AboutDialog, FilePropertiesDialog
 from src.ui.themes import ThemeManager
 from src.ui.detachable_window import initialize_window_manager
@@ -65,19 +66,25 @@ class MainWindow(QMainWindow):
         self.text_editor = TextEditorWidget()
         self.apk_tools = ApkToolWidget()
         self.archive_viewer = ArchiveViewer()
+        self.image_viewer = ImageViewer()
 
         # Hex editor is optional - only create when needed
         self.hex_editor = None
+
+        # DEX editor is optional - only create when needed
+        self.dex_editor = None
 
         # Register tools with window manager
         self.window_manager.register_tool("Text Editor", self.text_editor)
         self.window_manager.register_tool("APK Tools", self.apk_tools)
         self.window_manager.register_tool("Archive Viewer", self.archive_viewer)
+        self.window_manager.register_tool("Image Viewer", self.image_viewer)
 
         # Add tools to tool manager
         self.tool_manager.add_tool("Text Editor", self.text_editor)
         self.tool_manager.add_tool("APK Tools", self.apk_tools)
         self.tool_manager.add_tool("Archive Viewer", self.archive_viewer)
+        self.tool_manager.add_tool("Image Viewer", self.image_viewer)
 
         self.main_splitter.addWidget(self.tool_manager)
 
@@ -243,6 +250,10 @@ class MainWindow(QMainWindow):
         detach_archive_action.triggered.connect(lambda: self.detach_tool("Archive Viewer"))
         detach_menu.addAction(detach_archive_action)
 
+        detach_image_action = QAction("Image Viewer", self)
+        detach_image_action.triggered.connect(lambda: self.detach_tool("Image Viewer"))
+        detach_menu.addAction(detach_image_action)
+
         # Hex editor detach option (only shown when hex editor is enabled)
         self.detach_hex_action = QAction("Hex Editor", self)
         self.detach_hex_action.triggered.connect(lambda: self.detach_tool("Hex Editor"))
@@ -400,6 +411,12 @@ class MainWindow(QMainWindow):
         self.archive_btn.setFixedSize(36, 36)
         self.archive_btn.clicked.connect(lambda: self.focus_tool("Archive Viewer"))
         toolbar.addWidget(self.archive_btn)
+
+        self.image_btn = QPushButton("🖼️")
+        self.image_btn.setToolTip("Image Viewer")
+        self.image_btn.setFixedSize(36, 36)
+        self.image_btn.clicked.connect(lambda: self.focus_tool("Image Viewer"))
+        toolbar.addWidget(self.image_btn)
 
         toolbar.addSeparator()
 
@@ -852,28 +869,56 @@ class MainWindow(QMainWindow):
             self.quick_decompile_btn.setEnabled(False)
 
     def on_file_double_clicked(self, file_path):
-        """Handle file double click"""
-        if FileUtils.is_apk_file(file_path):
-            # Load APK in APK tools
-            self.apk_tools.set_apk_file(file_path)
-            self.focus_tool("APK Tools")  # Switch to APK tools
-        elif FileUtils.is_archive_file(file_path):
-            # Load archive in archive viewer
-            self.archive_viewer.load_archive(file_path)
-            self.focus_tool("Archive Viewer")  # Switch to archive viewer
-        elif FileUtils.is_text_file(file_path):
-            # Open in text editor
-            self.open_file_in_editor(file_path)
+        """Handle file double click based on user preferences"""
+        from src.utils.config import config
+
+        print(f"DEBUG: Double-click detected on: {file_path}")
+        print(f"DEBUG: File exists: {Path(file_path).exists()}")
+        print(f"DEBUG: Is file: {Path(file_path).is_file()}")
+
+        # Get user preference for double-click action
+        double_click_action = config.get('double_click_action', 'Open')
+        print(f"DEBUG: Double-click action: {double_click_action}")
+
+        if double_click_action == 'Rename':
+            # Trigger rename action
+            self.rename_file(file_path)
+            return
+        elif double_click_action == 'Properties':
+            # Show file properties
+            self.show_file_properties(file_path)
+            return
+
+        # Default 'Open' behavior - smart file opening based on type
+        if Path(file_path).is_file():
+            print(f"DEBUG: Processing file: {file_path}")
+            # Check file type and open in appropriate viewer
+            if FileUtils.is_image_file(file_path):
+                print(f"DEBUG: Detected as image file")
+                # Open images in image viewer
+                self.open_image_in_viewer(file_path)
+            elif FileUtils.is_apk_file(file_path):
+                print(f"DEBUG: Detected as APK file")
+                # Load APK in APK tools
+                self.apk_tools.set_apk_file(file_path)
+                self.focus_tool("APK Tools")  # Switch to APK tools
+            elif FileUtils.is_archive_file(file_path):
+                print(f"DEBUG: Detected as archive file")
+                # Load archive in archive viewer
+                self.archive_viewer.load_archive(file_path)
+                self.focus_tool("Archive Viewer")  # Switch to archive viewer
+            elif FileUtils.is_dex_file(file_path):
+                print(f"DEBUG: Detected as DEX file")
+                # Load DEX in DEX editor
+                self.open_dex_file(file_path)
+            else:
+                print(f"DEBUG: Detected as other file type, opening in text editor")
+                # For text files and others, open in text editor
+                self.open_file_in_editor(file_path)
         else:
-            # Try to open with system default
-            try:
-                import subprocess
-                subprocess.run(['xdg-open', file_path])
-            except:
-                QMessageBox.information(
-                    self, "File Type",
-                    f"Cannot open file type: {Path(file_path).suffix}"
-                )
+            print(f"DEBUG: Not a file, showing options dialog")
+            # For other file types, show options dialog
+            self.show_file_open_options(file_path)
 
     def on_archive_file_double_clicked(self, archive_path, file_path):
         """Handle double click on file in archive"""
@@ -893,6 +938,16 @@ class MainWindow(QMainWindow):
         """Open file in text editor"""
         self.text_editor.open_file(file_path)
         self.focus_tool("Text Editor")  # Switch to editor
+
+    def open_dex_file(self, file_path):
+        """Open DEX file in DEX editor"""
+        # Enable DEX editor if not already enabled
+        if self.dex_editor is None:
+            self.enable_dex_editor()
+
+        if self.dex_editor:
+            self.dex_editor.load_dex_file(file_path)
+            self.focus_tool("DEX Editor")  # Switch to DEX editor
 
     def open_in_hex_editor(self, file_path):
         """Open file in hex editor"""
@@ -932,6 +987,31 @@ class MainWindow(QMainWindow):
 
             except Exception as e:
                 QMessageBox.warning(self, "Hex Editor", f"Failed to enable hex editor: {str(e)}")
+
+    def enable_dex_editor(self):
+        """Enable the DEX editor tool"""
+        if self.dex_editor is None:
+            try:
+                from src.editors.dex_editor import DexEditor
+                self.dex_editor = DexEditor()
+
+                # Register with window manager
+                self.window_manager.register_tool("DEX Editor", self.dex_editor)
+
+                # Add to tool manager
+                self.tool_manager.add_tool("DEX Editor", self.dex_editor)
+
+                # Connect signals
+                self.dex_editor.file_opened.connect(self.on_dex_file_opened)
+
+                self.status_bar.showMessage("DEX Editor enabled")
+
+            except Exception as e:
+                QMessageBox.warning(self, "DEX Editor", f"Failed to enable DEX editor: {str(e)}")
+
+    def on_dex_file_opened(self, file_path):
+        """Handle DEX file opened in DEX editor"""
+        self.status_bar.showMessage(f"DEX file loaded: {Path(file_path).name}")
 
     def add_hex_editor_toolbar_button(self):
         """Add hex editor button to toolbar"""
@@ -1135,7 +1215,10 @@ class MainWindow(QMainWindow):
 
             if file_path.is_file():
                 # Determine how to handle the file based on its type
-                if FileUtils.is_text_file(str(file_path)):
+                if FileUtils.is_image_file(str(file_path)):
+                    # Open image files in image viewer
+                    self.open_image_in_viewer(str(file_path))
+                elif FileUtils.is_text_file(str(file_path)):
                     # Open text files in the text editor
                     self.open_file_in_editor(str(file_path))
                 elif FileUtils.is_apk_file(str(file_path)):
@@ -1146,6 +1229,9 @@ class MainWindow(QMainWindow):
                     # Load archive files in archive viewer
                     self.archive_viewer.load_archive(str(file_path))
                     self.focus_tool("Archive Viewer")
+                elif FileUtils.is_dex_file(str(file_path)):
+                    # Load DEX files in DEX editor
+                    self.open_dex_file(str(file_path))
                 else:
                     # For other files, ask user what to do
                     self.show_file_open_options(str(file_path))
@@ -1160,7 +1246,7 @@ class MainWindow(QMainWindow):
         dialog = QDialog(self)
         dialog.setWindowTitle("Open File")
         dialog.setModal(True)
-        dialog.resize(400, 200)
+        dialog.resize(500, 200)
 
         layout = QVBoxLayout(dialog)
 
@@ -1170,6 +1256,13 @@ class MainWindow(QMainWindow):
 
         # Buttons
         button_layout = QHBoxLayout()
+
+        # Add Image Viewer option for image files
+        if FileUtils.is_image_file(file_path):
+            image_btn = QPushButton("🖼️ Image Viewer")
+            image_btn.clicked.connect(lambda: self.open_file_with_option(file_path, "image"))
+            image_btn.clicked.connect(dialog.accept)
+            button_layout.addWidget(image_btn)
 
         text_btn = QPushButton("📝 Text Editor")
         text_btn.clicked.connect(lambda: self.open_file_with_option(file_path, "text"))
@@ -1202,3 +1295,51 @@ class MainWindow(QMainWindow):
             self.open_in_hex_editor(file_path)
         elif option == "external":
             self.open_with_external_editor(file_path)
+        elif option == "image":
+            self.open_image_in_viewer(file_path)
+        elif option == "dex":
+            self.open_dex_file(file_path)
+
+    def rename_file(self, file_path):
+        """Rename a file"""
+        from PyQt5.QtWidgets import QInputDialog
+        old_path = Path(file_path)
+        new_name, ok = QInputDialog.getText(
+            self, "Rename", "New name:", text=old_path.name
+        )
+        if ok and new_name and new_name != old_path.name:
+            try:
+                new_path = old_path.parent / new_name
+                old_path.rename(new_path)
+                self.file_manager.refresh_views()
+                self.status_bar.showMessage(f"Renamed to: {new_name}")
+            except Exception as e:
+                QMessageBox.warning(self, "Rename Error", f"Failed to rename file:\n{str(e)}")
+
+    def show_file_properties(self, file_path):
+        """Show file properties dialog"""
+        from src.ui.dialogs import FilePropertiesDialog
+        dialog = FilePropertiesDialog(file_path, self)
+        dialog.exec_()
+
+    def open_image_in_viewer(self, file_path):
+        """Open image file in the image viewer"""
+        try:
+            print(f"DEBUG: Attempting to open image: {file_path}")
+            print(f"DEBUG: File exists: {Path(file_path).exists()}")
+            print(f"DEBUG: Is image file: {FileUtils.is_image_file(file_path)}")
+
+            # Load the image in the image viewer
+            if self.image_viewer.load_image(file_path):
+                # Switch to image viewer tool
+                self.focus_tool("Image Viewer")
+                self.status_bar.showMessage(f"Opened image: {Path(file_path).name}")
+                print(f"DEBUG: Successfully opened image in viewer")
+                return True
+            else:
+                print(f"DEBUG: Image viewer load_image returned False")
+                return False
+        except Exception as e:
+            print(f"DEBUG: Exception in open_image_in_viewer: {str(e)}")
+            QMessageBox.warning(self, "Image Viewer", f"Failed to open image: {str(e)}")
+            return False

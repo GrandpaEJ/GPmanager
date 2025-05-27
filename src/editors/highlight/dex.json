@@ -1,0 +1,103 @@
+{
+  "name": "DEX Bytecode",
+  "extensions": [".dex"],
+  "colors": {
+    "opcode": "#569cd6",
+    "register": "#dcdcaa",
+    "type": "#4ec9b0",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "label": "#d7ba7d",
+    "operator": "#d4d4d4",
+    "header": "#c586c0"
+  },
+  "rules": [
+    {
+      "name": "dex_header",
+      "pattern": "\\b(magic|version|checksum|signature|file_size|header_size|endian_tag|link_size|link_off|map_off|string_ids_size|string_ids_off|type_ids_size|type_ids_off|proto_ids_size|proto_ids_off|field_ids_size|field_ids_off|method_ids_size|method_ids_off|class_defs_size|class_defs_off|data_size|data_off)\\b",
+      "color": "header",
+      "bold": true
+    },
+    {
+      "name": "dalvik_opcodes",
+      "pattern": "\\b(nop|move|move-wide|move-object|move-result|move-result-wide|move-result-object|move-exception|return-void|return|return-wide|return-object|const|const-wide|const-string|const-class|monitor-enter|monitor-exit|check-cast|instance-of|array-length|new-instance|new-array|filled-new-array|filled-new-array-range|fill-array-data|throw|goto|packed-switch|sparse-switch|cmpl-float|cmpg-float|cmpl-double|cmpg-double|cmp-long|if-eq|if-ne|if-lt|if-ge|if-gt|if-le|if-eqz|if-nez|if-ltz|if-gez|if-gtz|if-lez|aget|aget-wide|aget-object|aget-boolean|aget-byte|aget-char|aget-short|aput|aput-wide|aput-object|aput-boolean|aput-byte|aput-char|aput-short|iget|iget-wide|iget-object|iget-boolean|iget-byte|iget-char|iget-short|iput|iput-wide|iput-object|iput-boolean|iput-byte|iput-char|iput-short|sget|sget-wide|sget-object|sget-boolean|sget-byte|sget-char|sget-short|sput|sput-wide|sput-object|sput-boolean|sput-byte|sput-char|sput-short|invoke-virtual|invoke-super|invoke-direct|invoke-static|invoke-interface|invoke-virtual-range|invoke-super-range|invoke-direct-range|invoke-static-range|invoke-interface-range|invoke-polymorphic|invoke-polymorphic-range|invoke-custom|invoke-custom-range)\\b",
+      "color": "opcode",
+      "bold": true
+    },
+    {
+      "name": "arithmetic_opcodes",
+      "pattern": "\\b(neg-int|not-int|neg-long|not-long|neg-float|neg-double|int-to-long|int-to-float|int-to-double|long-to-int|long-to-float|long-to-double|float-to-int|float-to-long|float-to-double|double-to-int|double-to-long|double-to-float|int-to-byte|int-to-char|int-to-short|add-int|sub-int|mul-int|div-int|rem-int|and-int|or-int|xor-int|shl-int|shr-int|ushr-int|add-long|sub-long|mul-long|div-long|rem-long|and-long|or-long|xor-long|shl-long|shr-long|ushr-long|add-float|sub-float|mul-float|div-float|rem-float|add-double|sub-double|mul-double|div-double|rem-double)\\b",
+      "color": "opcode"
+    },
+    {
+      "name": "address_opcodes",
+      "pattern": "\\b(add-int/2addr|sub-int/2addr|mul-int/2addr|div-int/2addr|rem-int/2addr|and-int/2addr|or-int/2addr|xor-int/2addr|shl-int/2addr|shr-int/2addr|ushr-int/2addr|add-long/2addr|sub-long/2addr|mul-long/2addr|div-long/2addr|rem-long/2addr|and-long/2addr|or-long/2addr|xor-long/2addr|shl-long/2addr|shr-long/2addr|ushr-long/2addr|add-float/2addr|sub-float/2addr|mul-float/2addr|div-float/2addr|rem-float/2addr|add-double/2addr|sub-double/2addr|mul-double/2addr|div-double/2addr|rem-double/2addr)\\b",
+      "color": "opcode"
+    },
+    {
+      "name": "literal_opcodes",
+      "pattern": "\\b(add-int/lit16|rsub-int|mul-int/lit16|div-int/lit16|rem-int/lit16|and-int/lit16|or-int/lit16|xor-int/lit16|add-int/lit8|rsub-int/lit8|mul-int/lit8|div-int/lit8|rem-int/lit8|and-int/lit8|or-int/lit8|xor-int/lit8|shl-int/lit8|shr-int/lit8|ushr-int/lit8)\\b",
+      "color": "opcode"
+    },
+    {
+      "name": "registers",
+      "pattern": "\\b[vp]\\d+\\b",
+      "color": "register",
+      "bold": true
+    },
+    {
+      "name": "types",
+      "pattern": "L[\\w/$]+;|\\[[ZBSCIJFD]|[ZBSCIJFDV]",
+      "color": "type"
+    },
+    {
+      "name": "method_signatures",
+      "pattern": "L[\\w/$]+;->[\\w$<>]+\\([^)]*\\)[ZBSCIJFDVL\\[]",
+      "color": "type",
+      "bold": true
+    },
+    {
+      "name": "field_signatures",
+      "pattern": "L[\\w/$]+;->[\\w$]+:[ZBSCIJFDVL\\[]",
+      "color": "type"
+    },
+    {
+      "name": "string_literals",
+      "pattern": "\"([^\"\\\\]|\\\\.)*\"",
+      "color": "string"
+    },
+    {
+      "name": "hex_numbers",
+      "pattern": "\\b0x[0-9a-fA-F]+[lLsStT]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "decimal_numbers",
+      "pattern": "\\b-?\\d+(\\.\\d+)?[fFdDlLsStT]?\\b",
+      "color": "number"
+    },
+    {
+      "name": "labels",
+      "pattern": ":[\\w_]+",
+      "color": "label",
+      "bold": true
+    },
+    {
+      "name": "goto_targets",
+      "pattern": "\\+0x[0-9a-fA-F]+",
+      "color": "label"
+    },
+    {
+      "name": "comments",
+      "pattern": "//.*$|#.*$",
+      "color": "comment",
+      "italic": true
+    },
+    {
+      "name": "operators",
+      "pattern": "[{}(),->:]",
+      "color": "operator"
+    }
+  ]
+}

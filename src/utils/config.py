@@ -13,12 +13,48 @@ class Config:
         self.config_dir = Path.home() / '.gpmanager'
         self.config_file = self.config_dir / 'config.json'
         self.default_config = {
+            # General settings
             'theme': 'dark',
-            'font_size': 10,
-            'font_family': 'Consolas',
             'show_hidden_files': False,
+            'show_file_extensions': True,
+            'confirm_delete': True,
+            'double_click_action': 'Open',
+            'use_custom_titlebar': False,
+            'remember_window_state': True,
+            'start_maximized': False,
+
+            # Editor settings
+            'font_family': 'Consolas',
+            'font_size': 10,
+            'word_wrap': False,
+            'line_numbers': True,
+            'highlight_current_line': True,
+            'auto_indent': True,
+            'tab_width': 4,
+            'use_spaces': True,
+
+            # Tools settings
             'apktool_path': 'apktool',
             'java_path': 'java',
+
+            # Appearance settings
+            'theme_variant': 'Default',
+            'ui_scale': 100,
+            'show_file_icons': True,
+            'icon_size': 'Medium (24px)',
+            'background_color': '#2b2b2b',
+            'text_color': '#ffffff',
+            'accent_color': '#0078d4',
+
+            # Advanced settings
+            'enable_animations': True,
+            'hardware_acceleration': True,
+            'cache_size': 100,
+            'auto_backup': False,
+            'debug_mode': False,
+            'verbose_logging': False,
+
+            # Window settings
             'window_geometry': {
                 'width': 1200,
                 'height': 800,

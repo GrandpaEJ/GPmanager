@@ -13,26 +13,26 @@ from src.utils.config import config
 
 class ExternalEditor:
     """Represents an external editor configuration"""
-    
+
     def __init__(self, name, command, args=None, extensions=None, description=""):
         self.name = name
         self.command = command
         self.args = args or []
         self.extensions = extensions or []
         self.description = description
-    
+
     def can_open(self, file_path):
         """Check if this editor can open the given file"""
         if not self.extensions:
             return True  # Can open any file
-        
+
         ext = Path(file_path).suffix.lower()
         return ext in self.extensions
-    
+
     def is_available(self):
         """Check if the editor is available on the system"""
         return shutil.which(self.command) is not None
-    
+
     def to_dict(self):
         """Convert to dictionary for storage"""
         return {
@@ -42,7 +42,7 @@ class ExternalEditor:
             'extensions': self.extensions,
             'description': self.description
         }
-    
+
     @classmethod
     def from_dict(cls, data):
         """Create from dictionary"""
@@ -57,15 +57,15 @@ class ExternalEditor:
 
 class ExternalEditorManager(QObject):
     """Manages external editors and their configurations"""
-    
+
     editor_opened = pyqtSignal(str, str)  # file_path, editor_name
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.editors = {}
         self.load_default_editors()
         self.load_custom_editors()
-    
+
     def load_default_editors(self):
         """Load default editor configurations"""
         default_editors = [
@@ -150,8 +150,22 @@ class ExternalEditorManager(QObject):
                 name="Android Studio",
                 command="studio",
                 args=["{file}"],
-                extensions=[".java", ".kt", ".xml", ".gradle"],
+                extensions=[".java", ".kt", ".xml", ".gradle", ".smali", ".dex"],
                 description="Android Studio IDE"
+            ),
+            ExternalEditor(
+                name="Jadx GUI",
+                command="jadx-gui",
+                args=["{file}"],
+                extensions=[".dex", ".apk", ".jar"],
+                description="Jadx Decompiler GUI"
+            ),
+            ExternalEditor(
+                name="Baksmali",
+                command="baksmali",
+                args=["disassemble", "{file}"],
+                extensions=[".dex"],
+                description="Baksmali DEX Disassembler"
             ),
             ExternalEditor(
                 name="Hex Editor (GHex)",
@@ -180,11 +194,11 @@ class ExternalEditorManager(QObject):
                 description="Blender 3D Creation Suite"
             )
         ]
-        
+
         for editor in default_editors:
             if editor.is_available():
                 self.editors[editor.name] = editor
-    
+
     def load_custom_editors(self):
         """Load custom editor configurations from config"""
         custom_editors = config.get('external_editors', [])
@@ -195,7 +209,7 @@ class ExternalEditorManager(QObject):
                     self.editors[editor.name] = editor
             except Exception as e:
                 print(f"Error loading custom editor: {e}")
-    
+
     def save_custom_editors(self):
         """Save custom editors to config"""
         custom_editors = []
@@ -203,23 +217,23 @@ class ExternalEditorManager(QObject):
             # Only save non-default editors
             if not self._is_default_editor(editor):
                 custom_editors.append(editor.to_dict())
-        
+
         config.set('external_editors', custom_editors)
         config.save_config()
-    
+
     def _is_default_editor(self, editor):
         """Check if editor is a default editor"""
         default_commands = [
             "code", "code-insiders", "vim", "nvim", "emacs", "nano",
             "gedit", "kate", "subl", "atom", "idea", "pycharm", "studio",
-            "ghex", "bless", "gimp", "blender"
+            "jadx-gui", "baksmali", "ghex", "bless", "gimp", "blender"
         ]
         return editor.command in default_commands
-    
+
     def get_available_editors(self):
         """Get list of available editors"""
         return list(self.editors.values())
-    
+
     def get_editors_for_file(self, file_path):
         """Get editors that can open the given file"""
         suitable_editors = []
@@ -227,7 +241,7 @@ class ExternalEditorManager(QObject):
             if editor.can_open(file_path):
                 suitable_editors.append(editor)
         return suitable_editors
-    
+
     def open_file(self, file_path, editor_name=None):
         """Open file in external editor"""
         if editor_name and editor_name in self.editors:
@@ -238,7 +252,7 @@ class ExternalEditorManager(QObject):
             if not suitable_editors:
                 return False, "No suitable editor found"
             editor = suitable_editors[0]
-        
+
         try:
             # Prepare command arguments
             args = []
@@ -247,22 +261,22 @@ class ExternalEditorManager(QObject):
                     args.append(arg.replace("{file}", file_path))
                 else:
                     args.append(arg)
-            
+
             # Launch editor
             process = QProcess()
             process.startDetached(editor.command, args)
-            
+
             self.editor_opened.emit(file_path, editor.name)
             return True, f"Opened in {editor.name}"
-            
+
         except Exception as e:
             return False, f"Failed to open in {editor.name}: {str(e)}"
-    
+
     def add_custom_editor(self, editor):
         """Add a custom editor"""
         self.editors[editor.name] = editor
         self.save_custom_editors()
-    
+
     def remove_editor(self, editor_name):
         """Remove an editor"""
         if editor_name in self.editors:
@@ -276,7 +290,7 @@ class ExternalEditorManager(QObject):
 
 class ExternalEditorDialog(QDialog):
     """Dialog for managing external editors"""
-    
+
     def __init__(self, manager, parent=None):
         super().__init__(parent)
         self.manager = manager
@@ -285,39 +299,39 @@ class ExternalEditorDialog(QDialog):
         self.resize(600, 400)
         self.setup_ui()
         self.load_editors()
-    
+
     def setup_ui(self):
         """Setup user interface"""
         layout = QVBoxLayout(self)
-        
+
         # Editor list
         self.editor_list = QListWidget()
         layout.addWidget(QLabel("Available Editors:"))
         layout.addWidget(self.editor_list)
-        
+
         # Buttons
         button_layout = QHBoxLayout()
-        
+
         add_btn = QPushButton("Add Editor")
         add_btn.clicked.connect(self.add_editor)
         button_layout.addWidget(add_btn)
-        
+
         edit_btn = QPushButton("Edit")
         edit_btn.clicked.connect(self.edit_editor)
         button_layout.addWidget(edit_btn)
-        
+
         remove_btn = QPushButton("Remove")
         remove_btn.clicked.connect(self.remove_editor)
         button_layout.addWidget(remove_btn)
-        
+
         button_layout.addStretch()
-        
+
         close_btn = QPushButton("Close")
         close_btn.clicked.connect(self.accept)
         button_layout.addWidget(close_btn)
-        
+
         layout.addLayout(button_layout)
-    
+
     def load_editors(self):
         """Load editors into list"""
         self.editor_list.clear()
@@ -325,7 +339,7 @@ class ExternalEditorDialog(QDialog):
             status = "✓" if editor.is_available() else "✗"
             item_text = f"{status} {editor.name} - {editor.description}"
             self.editor_list.addItem(item_text)
-    
+
     def add_editor(self):
         """Add new custom editor"""
         dialog = EditorConfigDialog(self)
@@ -333,7 +347,7 @@ class ExternalEditorDialog(QDialog):
             editor = dialog.get_editor()
             self.manager.add_custom_editor(editor)
             self.load_editors()
-    
+
     def edit_editor(self):
         """Edit selected editor"""
         current_row = self.editor_list.currentRow()
@@ -346,7 +360,7 @@ class ExternalEditorDialog(QDialog):
                     updated_editor = dialog.get_editor()
                     self.manager.add_custom_editor(updated_editor)
                     self.load_editors()
-    
+
     def remove_editor(self):
         """Remove selected editor"""
         current_row = self.editor_list.currentRow()
@@ -362,7 +376,7 @@ class ExternalEditorDialog(QDialog):
 
 class EditorConfigDialog(QDialog):
     """Dialog for configuring an external editor"""
-    
+
     def __init__(self, parent=None, editor=None):
         super().__init__(parent)
         self.editor = editor
@@ -372,51 +386,51 @@ class EditorConfigDialog(QDialog):
         self.setup_ui()
         if editor:
             self.load_editor_data()
-    
+
     def setup_ui(self):
         """Setup user interface"""
         layout = QVBoxLayout(self)
-        
+
         # Name
         layout.addWidget(QLabel("Name:"))
         self.name_edit = QLineEdit()
         layout.addWidget(self.name_edit)
-        
+
         # Command
         layout.addWidget(QLabel("Command:"))
         self.command_edit = QLineEdit()
         layout.addWidget(self.command_edit)
-        
+
         # Arguments
         layout.addWidget(QLabel("Arguments (use {file} for file path):"))
         self.args_edit = QLineEdit()
         self.args_edit.setPlaceholderText("e.g., {file} --new-window")
         layout.addWidget(self.args_edit)
-        
+
         # Extensions
         layout.addWidget(QLabel("File Extensions (comma-separated):"))
         self.extensions_edit = QLineEdit()
         self.extensions_edit.setPlaceholderText("e.g., .py,.js,.html")
         layout.addWidget(self.extensions_edit)
-        
+
         # Description
         layout.addWidget(QLabel("Description:"))
         self.description_edit = QLineEdit()
         layout.addWidget(self.description_edit)
-        
+
         # Buttons
         button_layout = QHBoxLayout()
-        
+
         ok_btn = QPushButton("OK")
         ok_btn.clicked.connect(self.accept)
         button_layout.addWidget(ok_btn)
-        
+
         cancel_btn = QPushButton("Cancel")
         cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(cancel_btn)
-        
+
         layout.addLayout(button_layout)
-    
+
     def load_editor_data(self):
         """Load editor data into form"""
         self.name_edit.setText(self.editor.name)
@@ -424,7 +438,7 @@ class EditorConfigDialog(QDialog):
         self.args_edit.setText(" ".join(self.editor.args))
         self.extensions_edit.setText(",".join(self.editor.extensions))
         self.description_edit.setText(self.editor.description)
-    
+
     def get_editor(self):
         """Get editor from form data"""
         name = self.name_edit.text().strip()
@@ -432,7 +446,7 @@ class EditorConfigDialog(QDialog):
         args = [arg.strip() for arg in self.args_edit.text().split() if arg.strip()]
         extensions = [ext.strip() for ext in self.extensions_edit.text().split(",") if ext.strip()]
         description = self.description_edit.text().strip()
-        
+
         return ExternalEditor(name, command, args, extensions, description)
 
 

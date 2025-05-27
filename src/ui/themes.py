@@ -8,6 +8,138 @@ from PyQt5.QtGui import QPalette, QColor
 class ThemeManager:
     """Manages application themes"""
 
+    def __init__(self):
+        self.theme_variants = {
+            'default': {},
+            'high contrast': {
+                'background': '#000000',
+                'text': '#ffffff',
+                'accent': '#ffff00'
+            },
+            'blue': {
+                'background': '#1e3a5f',
+                'text': '#ffffff',
+                'accent': '#4a9eff'
+            },
+            'green': {
+                'background': '#1e3a2e',
+                'text': '#ffffff',
+                'accent': '#4aff6b'
+            }
+        }
+
+    def get_theme_with_customization(self, theme_name='dark', variant='Default', custom_colors=None, ui_scale=100):
+        """Get theme with customizations applied"""
+        base_theme = self.get_dark_theme() if theme_name == 'dark' else self.get_light_theme()
+
+        # Apply variant colors
+        if variant.lower() != 'default' and variant.lower() in self.theme_variants:
+            variant_colors = self.theme_variants[variant.lower()]
+            if 'background' in variant_colors:
+                base_theme = base_theme.replace('#2b2b2b', variant_colors['background'])
+                base_theme = base_theme.replace('#3c3c3c', variant_colors['background'])
+            if 'accent' in variant_colors:
+                base_theme = base_theme.replace('#0078d4', variant_colors['accent'])
+
+        # Apply custom colors
+        if custom_colors:
+            if 'background_color' in custom_colors:
+                base_theme = base_theme.replace('#2b2b2b', custom_colors['background_color'])
+                base_theme = base_theme.replace('#3c3c3c', custom_colors['background_color'])
+            if 'text_color' in custom_colors:
+                base_theme = base_theme.replace('#ffffff', custom_colors['text_color'])
+            if 'accent_color' in custom_colors:
+                base_theme = base_theme.replace('#0078d4', custom_colors['accent_color'])
+
+        # Apply UI scaling
+        if ui_scale != 100:
+            scale_factor = ui_scale / 100.0
+            # Scale font sizes and padding
+            import re
+
+            # Scale font sizes
+            def scale_font_size(match):
+                size = int(match.group(1))
+                return f"font-size: {int(size * scale_factor)}px"
+
+            base_theme = re.sub(r'font-size:\s*(\d+)px', scale_font_size, base_theme)
+
+            # Scale padding
+            def scale_padding(match):
+                padding = match.group(1)
+                if 'px' in padding:
+                    values = re.findall(r'(\d+)px', padding)
+                    scaled_values = [f"{int(int(v) * scale_factor)}px" for v in values]
+                    return f"padding: {' '.join(scaled_values)}"
+                return match.group(0)
+
+            base_theme = re.sub(r'padding:\s*([^;]+)', scale_padding, base_theme)
+
+        return base_theme
+
+    @staticmethod
+    def get_light_theme():
+        """Get light theme stylesheet"""
+        return """
+        QMainWindow {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        QMenuBar {
+            background-color: #f0f0f0;
+            color: #000000;
+            border: none;
+        }
+
+        QMenuBar::item {
+            background-color: transparent;
+            padding: 4px 8px;
+        }
+
+        QMenuBar::item:selected {
+            background-color: #e0e0e0;
+        }
+
+        QMenu {
+            background-color: #f0f0f0;
+            color: #000000;
+            border: 1px solid #cccccc;
+        }
+
+        QMenu::item:selected {
+            background-color: #e0e0e0;
+        }
+
+        QTreeView {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #cccccc;
+            selection-background-color: #0078d4;
+            selection-color: #ffffff;
+        }
+
+        QLineEdit {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #cccccc;
+            padding: 4px;
+            border-radius: 3px;
+        }
+
+        QPushButton {
+            background-color: #f0f0f0;
+            color: #000000;
+            border: 1px solid #cccccc;
+            padding: 6px 12px;
+            border-radius: 3px;
+        }
+
+        QPushButton:hover {
+            background-color: #e0e0e0;
+        }
+        """
+
     @staticmethod
     def get_dark_theme():
         """Get dark theme stylesheet"""
